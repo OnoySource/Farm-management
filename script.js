@@ -23,7 +23,7 @@ const weights = {
 const initialEmployees = [
     {
         id: 1,
-        name: "Ahmad Munawir SQ",
+        name: "KH Ahmad Munawir SQ",
         department: "Pemilik Usaha",
         positions: ["Pemilik Usaha"],
         workSystem: "Harian",
@@ -110,6 +110,7 @@ const initialEmployees = [
         teamwork: 85
     }
 ];
+
 
 
 /* =========================
@@ -469,6 +470,7 @@ function updateReports() {
 
 
     const departments = [
+        "Pemilik Usaha",
         "Manajemen",
         "Produksi / Kandang",
         "Sortir & Packing",
