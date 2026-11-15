@@ -3,7 +3,9 @@
    CONFIGURATION
 ========================= */
 
-const STORAGE_KEY = "kinerjaku_employees_v1";
+// Versi baru agar data simulasi terbaru tidak tertimpa
+// oleh data lama di Local Storage.
+const STORAGE_KEY = "kinerjaku_employees_v2";
 
 const weights = {
     productivity: 0.30,
@@ -13,12 +15,21 @@ const weights = {
     teamwork: 0.15
 };
 
+const departments = [
+    "Pemilik Usaha",
+    "Manajemen",
+    "Produksi / Kandang",
+    "Sortir & Packing",
+    "Pemasaran",
+    "Keuangan",
+    "Distribusi"
+];
+
 
 /* =========================
    INITIAL DATA
    DATA SIMULASI
 ========================= */
-
 
 const initialEmployees = [
     {
@@ -112,7 +123,6 @@ const initialEmployees = [
 ];
 
 
-
 /* =========================
    LOCAL STORAGE
 ========================= */
@@ -123,7 +133,10 @@ function loadEmployees() {
         const saved = localStorage.getItem(STORAGE_KEY);
 
         if (saved === null) {
-            return initialEmployees.map(item => ({ ...item }));
+            return initialEmployees.map(item => ({
+                ...item,
+                positions: [...item.positions]
+            }));
         }
 
         const data = JSON.parse(saved);
@@ -132,12 +145,25 @@ function loadEmployees() {
             throw new Error("Format data tidak valid");
         }
 
-        return data;
+        return data.map(employee => ({
+            ...employee,
+            positions: Array.isArray(employee.positions)
+                ? employee.positions
+                : [employee.department],
+            workSystem: employee.workSystem || "Harian"
+        }));
 
     } catch (error) {
+
         console.error("Gagal membaca data:", error);
-        return initialEmployees.map(item => ({ ...item }));
+
+        return initialEmployees.map(item => ({
+            ...item,
+            positions: [...item.positions]
+        }));
+
     }
+
 }
 
 
@@ -147,14 +173,24 @@ let employees = loadEmployees();
 function saveEmployees() {
 
     try {
+
         localStorage.setItem(
             STORAGE_KEY,
             JSON.stringify(employees)
         );
 
+        return true;
+
     } catch (error) {
+
         console.error("Gagal menyimpan data:", error);
-        alert("Data gagal disimpan. Periksa penyimpanan browser.");
+
+        alert(
+            "Data gagal disimpan. Periksa penyimpanan browser."
+        );
+
+        return false;
+
     }
 
 }
@@ -199,6 +235,15 @@ function getInitials(name) {
         .map(word => word[0])
         .join("")
         .toUpperCase();
+
+}
+
+
+function getPositions(employee) {
+
+    return Array.isArray(employee.positions)
+        ? employee.positions
+        : [employee.department];
 
 }
 
@@ -262,18 +307,24 @@ function getStatus(score) {
 
 function renderEmployees() {
 
-    const search = $("searchInput").value.toLowerCase();
+    const search = $("searchInput").value
+        .toLowerCase()
+        .trim();
 
     const department = $("departmentFilter").value;
 
     const filtered = employees.filter(employee => {
+
+        const positions = getPositions(employee);
 
         const nameMatch = employee.name
             .toLowerCase()
             .includes(search);
 
         const departmentMatch =
-            !department || employee.department === department;
+            !department ||
+            employee.department === department ||
+            positions.includes(department);
 
         return nameMatch && departmentMatch;
 
@@ -304,9 +355,12 @@ function renderEmployees() {
 
         const row = document.createElement("tr");
 
+        const positions = getPositions(employee);
+
         row.innerHTML = `
             <td>
                 <div class="employee-name">
+
                     <div class="employee-avatar">
                         ${escapeHTML(getInitials(employee.name))}
                     </div>
@@ -315,10 +369,21 @@ function renderEmployees() {
                         <strong>${escapeHTML(employee.name)}</strong>
                         <span>ID-${employee.id}</span>
                     </div>
+
                 </div>
             </td>
 
-            <td>${escapeHTML(employee.department)}</td>
+            <td>
+                <strong>${escapeHTML(employee.department)}</strong>
+
+                <small style="display:block;margin-top:4px;color:#64748b">
+                    ${positions.map(escapeHTML).join(", ")}
+                </small>
+
+                <small style="display:block;margin-top:3px;color:#0d8bb5">
+                    Sistem ${escapeHTML(employee.workSystem || "Harian")}
+                </small>
+            </td>
 
             <td>${employee.productivity}</td>
             <td>${employee.discipline}</td>
@@ -389,14 +454,21 @@ function updateDashboard() {
         ? (sum / total).toFixed(1)
         : "0.0";
 
-    const excellent = scores.filter(score => score >= 90).length;
+    const excellent = scores.filter(
+        score => score >= 90
+    ).length;
 
-    const evaluation = scores.filter(score => score < 70).length;
+    const evaluation = scores.filter(
+        score => score < 70
+    ).length;
 
 
     $("totalEmployees").textContent = total;
+
     $("averageScore").textContent = average;
+
     $("excellentEmployees").textContent = excellent;
+
     $("needsEvaluation").textContent = evaluation;
 
 }
@@ -411,22 +483,18 @@ function updateReports() {
     const groups = [
         {
             label: "Sangat Baik",
-            className: "excellent",
             count: 0
         },
         {
             label: "Baik",
-            className: "good",
             count: 0
         },
         {
             label: "Cukup",
-            className: "average",
             count: 0
         },
         {
             label: "Perlu Evaluasi",
-            className: "poor",
             count: 0
         }
     ];
@@ -469,22 +537,15 @@ function updateReports() {
     }).join("");
 
 
-    const departments = [
-        "Pemilik Usaha",
-        "Manajemen",
-        "Produksi / Kandang",
-        "Sortir & Packing",
-        "Pemasaran",
-        "Keuangan",
-        "Distribusi"
-    ];
-
-
+    // Laporan bagian menghitung jabatan rangkap juga.
     $("departmentReport").innerHTML = departments.map(department => {
 
-        const members = employees.filter(employee =>
-            employee.department === department
-        );
+        const members = employees.filter(employee => {
+
+            return employee.department === department ||
+                getPositions(employee).includes(department);
+
+        });
 
         const average = members.length
             ? members.reduce((sum, employee) =>
@@ -537,12 +598,22 @@ function closeModal() {
 
     $("scorePreview").textContent = "0 / 100";
 
+    // Reset field tambahan jika tersedia.
+    if ($("employeePositions")) {
+        $("employeePositions").value = "";
+    }
+
+    if ($("employeeWorkSystem")) {
+        $("employeeWorkSystem").value = "Harian";
+    }
+
 }
 
 
 $("addEmployeeBtn").addEventListener("click", () => {
 
     closeModal();
+
     openModal();
 
 });
@@ -625,22 +696,46 @@ employeeForm.addEventListener("submit", event => {
 
 
     if (!name || !department) {
+
         alert("Lengkapi identitas karyawan.");
+
         return;
+
     }
 
 
     const valid = Object.values(values).every(value =>
+
         Number.isFinite(value) &&
         value >= 0 &&
         value <= 100
+
     );
 
 
     if (!valid) {
+
         alert("Semua nilai harus antara 0 sampai 100.");
+
         return;
+
     }
+
+
+    // Jabatan tambahan dipisahkan dengan koma.
+    // Jika field belum tersedia, gunakan bagian utama.
+    const positionsInput = $("employeePositions")
+        ? $("employeePositions").value.trim()
+        : "";
+
+    const positions = positionsInput
+        ? positionsInput.split(",").map(item => item.trim()).filter(Boolean)
+        : [department];
+
+
+    const workSystem = $("employeeWorkSystem")
+        ? $("employeeWorkSystem").value
+        : "Harian";
 
 
     if (editingId !== null) {
@@ -653,6 +748,8 @@ employeeForm.addEventListener("submit", event => {
                     ...employee,
                     name,
                     department,
+                    positions,
+                    workSystem,
                     ...values
                 };
 
@@ -665,16 +762,22 @@ employeeForm.addEventListener("submit", event => {
     } else {
 
         employees.push({
+
             id: Date.now(),
+
             name,
             department,
+            positions,
+            workSystem,
+
             ...values
+
         });
 
     }
 
 
-    saveEmployees();
+    if (!saveEmployees()) return;
 
     renderEmployees();
 
@@ -703,6 +806,22 @@ function editEmployee(id) {
     $("employeeName").value = employee.name;
 
     $("employeeDepartment").value = employee.department;
+
+
+    if ($("employeePositions")) {
+
+        $("employeePositions").value =
+            getPositions(employee).join(", ");
+
+    }
+
+
+    if ($("employeeWorkSystem")) {
+
+        $("employeeWorkSystem").value =
+            employee.workSystem || "Harian";
+
+    }
 
 
     scoreFields.forEach(field => {
@@ -738,16 +857,28 @@ function deleteEmployee(id) {
     if (!confirmDelete) return;
 
 
+    const previousEmployees = employees;
+
     employees = employees.filter(item => item.id !== id);
 
-    saveEmployees();
+
+    if (!saveEmployees()) {
+
+        employees = previousEmployees;
+
+        return;
+
+    }
+
 
     renderEmployees();
 
 }
 
 
-/* EVENT DELEGATION */
+/* =========================
+   EVENT DELEGATION
+========================= */
 
 employeeTable.addEventListener("click", event => {
 
@@ -799,7 +930,9 @@ $("exportBtn").addEventListener("click", () => {
     const headers = [
         "ID",
         "Nama",
-        "Bagian",
+        "Bagian Utama",
+        "Jabatan",
+        "Sistem Kerja",
         "Produktivitas",
         "Kedisiplinan",
         "Kualitas Kerja",
@@ -815,34 +948,60 @@ $("exportBtn").addEventListener("click", () => {
         const score = calculateScore(employee);
 
         return [
+
             employee.id,
+
             employee.name,
+
             employee.department,
+
+            getPositions(employee).join("; "),
+
+            employee.workSystem || "Harian",
+
             employee.productivity,
+
             employee.discipline,
+
             employee.quality,
+
             employee.digital,
+
             employee.teamwork,
+
             score,
+
             getStatus(score).label
+
         ];
 
     });
 
 
     const escapeCSV = value =>
+
         `"${String(value).replace(/"/g, '""')}"`;
 
 
     const csv = [
+
         headers,
+
         ...rows
-    ].map(row => row.map(escapeCSV).join(",")).join("\r\n");
+
+    ].map(row =>
+
+        row.map(escapeCSV).join(",")
+
+    ).join("\r\n");
 
 
     const blob = new Blob(
+
         ["\uFEFF" + csv],
+
         { type: "text/csv;charset=utf-8;" }
+
     );
 
 
@@ -851,9 +1010,14 @@ $("exportBtn").addEventListener("click", () => {
     const link = document.createElement("a");
 
     link.href = url;
+
     link.download = "laporan-kinerja-karyawan.csv";
 
+    document.body.appendChild(link);
+
     link.click();
+
+    document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
 
@@ -871,7 +1035,9 @@ function updateDate() {
         new Date().toLocaleDateString("id-ID", {
 
             day: "numeric",
+
             month: "long",
+
             year: "numeric"
 
         });
