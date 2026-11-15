@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KinerjaKu - Peternakan Ayam Petelur</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-egg"></i>
+            </div>
+            <div>
+                <h2>KinerjaKu</h2>
+                <span>Farm Management</span>
+            </div>
+        </div>
+
+        <p class="menu-label">MENU UTAMA</p>
+
+        <nav class="menu">
+            <a href="#dashboard" class="menu-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#employees" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Data Karyawan</span>
+            </a>
+
+            <a href="#employees" class="menu-item">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <span>Penilaian Kinerja</span>
+            </a>
+
+            <a href="#report" class="menu-item">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Laporan</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="admin-profile">
+                <div class="avatar">AD</div>
+                <div class="admin-info">
+                    <strong>Admin HRD</strong>
+                    <span>Administrator</span>
+                </div>
+                <i class="fa-solid fa-ellipsis"></i>
+            </div>
+        </div>
+    </aside>
+
+
+    <main class="main-content" id="dashboard">
+
+        <header class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Monitoring dan evaluasi kinerja karyawan peternakan</p>
+            </div>
+
+            <div class="topbar-right">
+                <span class="date-info" id="currentDate"></span>
+                <div class="avatar">AD</div>
+            </div>
+        </header>
+
+
+        <!-- FARM INFORMATION -->
+
+        <section class="farm-banner">
+            <div>
+                <span class="eyebrow">EMPLOYEE PERFORMANCE SYSTEM</span>
+                <h2>Peternakan Ayam Petelur</h2>
+                <p>Kelola produktivitas dan evaluasi karyawan dalam satu sistem digital.</p>
+            </div>
+            <div class="farm-icon">
+                <i class="fa-solid fa-egg"></i>
+            </div>
+        </section>
+
+
+        <!-- OPERATIONAL DATA -->
+
+        <section class="section-block">
+            <div class="section-title">
+                <div>
+                    <h2>Informasi Operasional</h2>
+                    <p>Ringkasan aktivitas peternakan</p>
+                </div>
+            </div>
+
+            <div class="operation-grid">
+                <article class="operation-card">
+                    <div class="operation-icon blue">
+                        <i class="fa-solid fa-kiwi-bird"></i>
+                    </div>
+                    <div>
+                        <span>Populasi Ayam</span>
+                        <h3>3.000 <small>ekor</small></h3>
+                    </div>
+                </article>
+
+                <article class="operation-card">
+                    <div class="operation-icon purple">
+                        <i class="fa-solid fa-warehouse"></i>
+                    </div>
+                    <div>
+                        <span>Jumlah Kandang</span>
+                        <h3>2 <small>unit</small></h3>
+                    </div>
+                </article>
+
+                <article class="operation-card">
+                    <div class="operation-icon green">
+                        <i class="fa-solid fa-egg"></i>
+                    </div>
+                    <div>
+                        <span>Produksi Telur</span>
+                        <h3>150 <small>kg/hari</small></h3>
+                    </div>
+                </article>
+
+                <article class="operation-card">
+                    <div class="operation-icon orange">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                    <div>
+                        <span>Kebutuhan Pakan</span>
+                        <h3>300 <small>kg/hari</small></h3>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+
+        <!-- EMPLOYEE STATISTICS -->
+
+        <section class="section-block">
+            <div class="section-title">
+                <div>
+                    <h2>Statistik Karyawan</h2>
+                    <p>Ringkasan hasil penilaian kinerja</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total Karyawan</span>
+                        <i class="fa-solid fa-users blue-text"></i>
+                    </div>
+                    <h3 id="totalEmployees">0</h3>
+                    <p>Karyawan terdaftar</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Rata-rata Kinerja</span>
+                        <i class="fa-solid fa-chart-line purple-text"></i>
+                    </div>
+                    <h3 id="averageScore">0</h3>
+                    <p>Nilai rata-rata / 100</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Kinerja Sangat Baik</span>
+                        <i class="fa-solid fa-award green-text"></i>
+                    </div>
+                    <h3 id="excellentEmployees">0</h3>
+                    <p>Nilai minimal 90</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Perlu Evaluasi</span>
+                        <i class="fa-solid fa-triangle-exclamation orange-text"></i>
+                    </div>
+                    <h3 id="needsEvaluation">0</h3>
+                    <p>Nilai di bawah 70</p>
+                </article>
+            </div>
+        </section>
+
+
+        <!-- EMPLOYEE TABLE -->
+
+        <section class="employee-section section-block" id="employees">
+
+            <div class="section-title">
+                <div>
+                    <h2>Penilaian Karyawan</h2>
+                    <p>Daftar hasil evaluasi tenaga kerja peternakan</p>
+                </div>
+
+                <button class="primary-btn" id="addEmployeeBtn">
+                    <i class="fa-solid fa-plus"></i>
+                    Tambah Penilaian
+                </button>
+            </div>
+
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="search" id="searchInput" placeholder="Cari nama karyawan...">
+                </div>
+
+                <select id="departmentFilter">
+                    <option value="">Semua Bagian</option>
+                    <option>Manajemen</option>
+                    <option>Produksi / Kandang</option>
+                    <option>Sortir & Packing</option>
+                    <option>Pemasaran</option>
+                    <option>Keuangan</option>
+                    <option>Distribusi</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>KARYAWAN</th>
+                            <th>BAGIAN</th>
+                            <th>PRODUKTIVITAS</th>
+                            <th>KEDISIPLINAN</th>
+                            <th>KUALITAS</th>
+                            <th>KOMPETENSI DIGITAL</th>
+                            <th>KERJA SAMA</th>
+                            <th>NILAI AKHIR</th>
+                            <th>STATUS</th>
+                            <th>AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTable"></tbody>
+                </table>
+            </div>
+
+            <div class="table-footer" id="tableInfo"></div>
+        </section>
+
+
+        <!-- REPORT -->
+
+        <section class="report-section section-block" id="report">
+            <div class="section-title">
+                <div>
+                    <h2>Ringkasan Laporan</h2>
+                    <p>Distribusi hasil penilaian karyawan</p>
+                </div>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <h3>Distribusi Kinerja</h3>
+                    <div id="performanceReport"></div>
+                </div>
+
+                <div class="report-card">
+                    <h3>Rata-rata per Bagian</h3>
+                    <div id="departmentReport"></div>
+                </div>
+            </div>
+
+            <button class="secondary-btn" id="exportBtn">
+                <i class="fa-solid fa-file-csv"></i>
+                Ekspor CSV
+            </button>
+        </section>
+
+
+        <footer>
+            © 2026 KinerjaKu - Sistem Penilaian Kinerja Karyawan Digital
+        </footer>
+
+    </main>
+</div>
+
+
+<!-- MODAL FORM -->
+
+<div class="modal-overlay" id="employeeModal">
+    <div class="modal">
+
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">Tambah Penilaian</h2>
+                <p>Masukkan informasi dan hasil evaluasi karyawan.</p>
+            </div>
+
+            <button class="close-btn" id="closeModal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="employeeForm">
+
+            <div class="form-group">
+                <label for="employeeName">Nama Karyawan</label>
+                <input id="employeeName" type="text" required placeholder="Nama lengkap">
+            </div>
+
+            <div class="form-group">
+                <label for="employeeDepartment">Bagian / Jabatan</label>
+                <select id="employeeDepartment" required>
+                    <option value="">Pilih bagian</option>
+                    <option>Manajemen</option>
+                    <option>Produksi / Kandang</option>
+                    <option>Sortir & Packing</option>
+                    <option>Pemasaran</option>
+                    <option>Keuangan</option>
+                    <option>Distribusi</option>
+                </select>
+            </div>
+
+            <div class="score-fields">
+                <div class="form-group">
+                    <label>Produktivitas (30%)</label>
+                    <input id="productivity" type="number" min="0" max="100" required placeholder="0-100">
+                </div>
+
+                <div class="form-group">
+                    <label>Kedisiplinan (20%)</label>
+                    <input id="discipline" type="number" min="0" max="100" required placeholder="0-100">
+                </div>
+
+                <div class="form-group">
+                    <label>Kualitas Kerja (20%)</label>
+                    <input id="quality" type="number" min="0" max="100" required placeholder="0-100">
+                </div>
+
+                <div class="form-group">
+                    <label>Kompetensi Digital (15%)</label>
+                    <input id="digital" type="number" min="0" max="100" required placeholder="0-100">
+                </div>
+
+                <div class="form-group">
+                    <label>Kerja Sama (15%)</label>
+                    <input id="teamwork" type="number" min="0" max="100" required placeholder="0-100">
+                </div>
+            </div>
+
+            <div class="score-preview">
+                <span>Estimasi nilai akhir</span>
+                <strong id="scorePreview">0 / 100</strong>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="secondary-btn" id="cancelModal">Batal</button>
+                <button type="submit" class="primary-btn">Simpan Penilaian</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
